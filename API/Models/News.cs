@@ -1,11 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace Admin.Models
 {
     public class News
     {
         [Key]
+        [JsonIgnore]
         public int Id { get; set; }
 
         public virtual string Title { get; set; }

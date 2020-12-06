@@ -15,10 +15,7 @@ namespace Admin
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -28,12 +25,24 @@ namespace Admin
             
             var con = "Server=localhost;Database=master;User=root;";
 
+            services.AddDbContext<FacultyContext>(options => 
+                options.UseLazyLoadingProxies().UseMySql(con,
+                    mysqloptions => mysqloptions.ServerVersion
+                        (new Version(10,5,5), ServerType.MariaDb)));
+            
             services.AddDbContext<SchedulerContext>(options => 
                 options.UseLazyLoadingProxies().UseMySql(con,
                     mysqloptions => mysqloptions.ServerVersion
                         (new Version(10,5,5), ServerType.MariaDb)));
 
             services.AddControllers();
+            
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
 
             services.AddControllersWithViews();
         }
@@ -46,10 +55,14 @@ namespace Admin
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseHsts();
+
             app.UseHttpsRedirection();
             app.UseRouting();
             
             app.UseAuthorization();
+
+            app.UseCors("MyPolicy");
 
             app.UseEndpoints(endpoints =>
             {

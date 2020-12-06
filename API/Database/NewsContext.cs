@@ -11,6 +11,5 @@ namespace Admin.Database
         {
             Database.EnsureCreated();
         }
-
     }
 }

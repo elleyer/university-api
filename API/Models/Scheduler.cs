@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace Admin.Models
 {
     public class Scheduler
     {
         [Key]
+        [JsonIgnore]
         public int Id { get; set; }
-        
-        public string FacultyAndGroup { get; set; }
-        
+
         [ForeignKey("SchedulerDays")]
         public virtual List<SchedulerDay> SchedulerDays { get; set; }
     }
@@ -36,13 +36,6 @@ namespace Admin.Models
         Friday = 1 << 4,
         Saturday = 1 << 5,
         Sunday = 1 << 6
-    }
-
-    public enum SubGroup
-    {
-        None = 0,
-        First = 1 << 0,
-        Second = 1 << 1
     }
 
     public enum LessonType

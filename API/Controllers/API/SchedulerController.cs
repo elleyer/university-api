@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Admin.Database;
 using Admin.Models;
+using Admin.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Admin.Controllers.API
 {
@@ -13,398 +15,343 @@ namespace Admin.Controllers.API
     [Route("api/[controller]")]
     public class SchedulerController : ControllerBase
     {
-        private readonly SchedulerContext _db;
+        private readonly FacultyContext _db;
+        private readonly SchedulerContext _schedulerDb;
 
-        public SchedulerController(SchedulerContext context)
+        public SchedulerController(FacultyContext facultyContext, SchedulerContext schedulerContext)
         {
-            _db = context;
+            _db = facultyContext;
 
-            if (_db.Schedulers.Any()) return;
+            _schedulerDb = schedulerContext;
 
-            _db.Schedulers.Add(new Scheduler
+            if (!_db.Faculties.Any())
             {
-                FacultyAndGroup = "fis-sp12",
-                SchedulerDays = new List<SchedulerDay>()
+                _db.Faculties.Add(new Faculty
                 {
-                    new SchedulerDay()
+                    NameEn = "fis",
+                    NameUa = "фіс",
+                    Specialities = new List<Speciality>
                     {
-                        ScheduleWeekDay = ScheduleWeekDay.Monday,
-                        ClassSubjects = new List<ClassSubject>
+                        new Speciality
                         {
-                            new ClassSubject
+                            Code = 121,
+                            DescriptionUa = "Інженерія програмного забезпечення",
+                            Groups = new List<Group>
                             {
-                                EndTime = DateTime.Now,
-                                Index = 1,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "Math",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            },
-                            new ClassSubject()
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 2,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "English",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
+                                new Group
+                                {
+                                    Code = 11,
+                                    NameEn = "sp",
+                                    NameUa = "сп",
+                                    SubGroups = new List<SubGroup>
+                                    {
+                                        new SubGroup
+                                        {
+                                            Code = 1,
+                                            Scheduler = new Scheduler
+                                            {
+                                                SchedulerDays = new List<SchedulerDay>
+                                                {
+                                                    new SchedulerDay
+                                                    {
+                                                        ScheduleWeekDay = ScheduleWeekDay.Monday,
+                                                        ClassSubjects = new List<ClassSubject>
+                                                        {
+                                                            new ClassSubject
+                                                            {
+                                                                StartTime = DateTime.Now,
+                                                                EndTime = DateTime.Now,
+                                                                Index = 1,
+                                                                LessonContext = LessonContext.Lecture,
+                                                                LessonType = LessonType.Physical,
+                                                                Link = "google.com",
+                                                                Name = "test",
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        
+                                        new SubGroup
+                                        {
+                                            Code = 2,
+                                            Scheduler = new Scheduler
+                                            {
+                                                SchedulerDays = new List<SchedulerDay>
+                                                {
+                                                    new SchedulerDay
+                                                    {
+                                                        ScheduleWeekDay = ScheduleWeekDay.Monday,
+                                                        ClassSubjects = new List<ClassSubject>
+                                                        {
+                                                            new ClassSubject
+                                                            {
+                                                                StartTime = DateTime.Now,
+                                                                EndTime = DateTime.Now,
+                                                                Index = 1,
+                                                                LessonContext = LessonContext.Lecture,
+                                                                LessonType = LessonType.Physical,
+                                                                Link = "google.com",
+                                                                Name = "test2sub",
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                
+                                new Group
+                                {
+                                    Code = 12,
+                                    NameEn = "sp",
+                                    NameUa = "сп",
+                                    SubGroups = new List<SubGroup>
+                                    {
+                                        new SubGroup
+                                        {
+                                            Code = 1,
+                                            Scheduler = new Scheduler
+                                            {
+                                                SchedulerDays = new List<SchedulerDay>
+                                                {
+                                                    new SchedulerDay
+                                                    {
+                                                        ScheduleWeekDay = ScheduleWeekDay.Monday,
+                                                        ClassSubjects = new List<ClassSubject>
+                                                        {
+                                                            new ClassSubject
+                                                            {
+                                                                StartTime = DateTime.Now,
+                                                                EndTime = DateTime.Now,
+                                                                Index = 1,
+                                                                LessonContext = LessonContext.Lecture,
+                                                                LessonType = LessonType.Physical,
+                                                                Link = "google.com",
+                                                                Name = "test",
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        
+                                        new SubGroup
+                                        {
+                                            Code = 2,
+                                            Scheduler = new Scheduler
+                                            {
+                                                SchedulerDays = new List<SchedulerDay>
+                                                {
+                                                    new SchedulerDay
+                                                    {
+                                                        ScheduleWeekDay = ScheduleWeekDay.Monday,
+                                                        ClassSubjects = new List<ClassSubject>
+                                                        {
+                                                            new ClassSubject
+                                                            {
+                                                                StartTime = DateTime.Now,
+                                                                EndTime = DateTime.Now,
+                                                                Index = 1,
+                                                                LessonContext = LessonContext.Lecture,
+                                                                LessonType = LessonType.Physical,
+                                                                Link = "google.com",
+                                                                Name = "test2sub",
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                        }
-                    },
-                    new SchedulerDay()
-                    {
-                        ScheduleWeekDay = ScheduleWeekDay.Tuesday,
-                        ClassSubjects = new List<ClassSubject>
+                        },
+                        
+                        new Speciality
                         {
-                            new ClassSubject
+                            Code = 122,
+                            DescriptionUa = "Інженерія програмного забезпечення",
+                            Groups = new List<Group>
                             {
-                                EndTime = DateTime.Now,
-                                Index = 1,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "Math",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            },
-                            new ClassSubject()
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 2,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "English",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            }
-                        }
-                    },
-                    new SchedulerDay()
-                    {
-                        ScheduleWeekDay = ScheduleWeekDay.Wednesday,
-                        ClassSubjects = new List<ClassSubject>
-                        {
-                            new ClassSubject
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 1,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "Math",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            },
-                            new ClassSubject()
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 2,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "English",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            }
-                        }
-                    },
-                    new SchedulerDay()
-                    {
-                        ScheduleWeekDay = ScheduleWeekDay.Thursday,
-                        ClassSubjects = new List<ClassSubject>
-                        {
-                            new ClassSubject
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 1,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "Math",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            },
-                            new ClassSubject()
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 2,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "English",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            }
-                        }
-                    },
-                    new SchedulerDay()
-                    {
-                        ScheduleWeekDay = ScheduleWeekDay.Friday,
-                        ClassSubjects = new List<ClassSubject>
-                        {
-                            new ClassSubject
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 1,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "Math",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            },
-                            new ClassSubject()
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 2,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "English",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            }
-                        }
-                    },
-                    new SchedulerDay()
-                    {
-                        ScheduleWeekDay = ScheduleWeekDay.Saturday,
-                        ClassSubjects = new List<ClassSubject>
-                        {
-                            new ClassSubject
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 1,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "Math",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            },
-                            new ClassSubject()
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 2,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "English",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
+                                new Group
+                                {
+                                    Code = 11,
+                                    NameEn = "sp",
+                                    NameUa = "сп",
+                                    SubGroups = new List<SubGroup>
+                                    {
+                                        new SubGroup
+                                        {
+                                            Code = 1,
+                                            Scheduler = new Scheduler
+                                            {
+                                                SchedulerDays = new List<SchedulerDay>
+                                                {
+                                                    new SchedulerDay
+                                                    {
+                                                        ScheduleWeekDay = ScheduleWeekDay.Monday,
+                                                        ClassSubjects = new List<ClassSubject>
+                                                        {
+                                                            new ClassSubject
+                                                            {
+                                                                StartTime = DateTime.Now,
+                                                                EndTime = DateTime.Now,
+                                                                Index = 1,
+                                                                LessonContext = LessonContext.Lecture,
+                                                                LessonType = LessonType.Physical,
+                                                                Link = "google.com",
+                                                                Name = "test",
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        
+                                        new SubGroup
+                                        {
+                                            Code = 2,
+                                            Scheduler = new Scheduler
+                                            {
+                                                SchedulerDays = new List<SchedulerDay>
+                                                {
+                                                    new SchedulerDay
+                                                    {
+                                                        ScheduleWeekDay = ScheduleWeekDay.Monday,
+                                                        ClassSubjects = new List<ClassSubject>
+                                                        {
+                                                            new ClassSubject
+                                                            {
+                                                                StartTime = DateTime.Now,
+                                                                EndTime = DateTime.Now,
+                                                                Index = 1,
+                                                                LessonContext = LessonContext.Lecture,
+                                                                LessonType = LessonType.Physical,
+                                                                Link = "google.com",
+                                                                Name = "test2sub",
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                
+                                new Group
+                                {
+                                    Code = 12,
+                                    NameEn = "sp",
+                                    NameUa = "сп",
+                                    SubGroups = new List<SubGroup>
+                                    {
+                                        new SubGroup
+                                        {
+                                            Code = 1,
+                                            Scheduler = new Scheduler
+                                            {
+                                                SchedulerDays = new List<SchedulerDay>
+                                                {
+                                                    new SchedulerDay
+                                                    {
+                                                        ScheduleWeekDay = ScheduleWeekDay.Monday,
+                                                        ClassSubjects = new List<ClassSubject>
+                                                        {
+                                                            new ClassSubject
+                                                            {
+                                                                StartTime = DateTime.Now,
+                                                                EndTime = DateTime.Now,
+                                                                Index = 1,
+                                                                LessonContext = LessonContext.Lecture,
+                                                                LessonType = LessonType.Physical,
+                                                                Link = "google.com",
+                                                                Name = "test",
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        
+                                        new SubGroup
+                                        {
+                                            Code = 2,
+                                            Scheduler = new Scheduler
+                                            {
+                                                SchedulerDays = new List<SchedulerDay>
+                                                {
+                                                    new SchedulerDay
+                                                    {
+                                                        ScheduleWeekDay = ScheduleWeekDay.Monday,
+                                                        ClassSubjects = new List<ClassSubject>
+                                                        {
+                                                            new ClassSubject
+                                                            {
+                                                                StartTime = DateTime.Now,
+                                                                EndTime = DateTime.Now,
+                                                                Index = 1,
+                                                                LessonContext = LessonContext.Lecture,
+                                                                LessonType = LessonType.Physical,
+                                                                Link = "google.com",
+                                                                Name = "test2sub",
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            });
-                
-            _db.Schedulers.Add(new Scheduler
-            {
-                FacultyAndGroup = "fis-sp11",
-                SchedulerDays = new List<SchedulerDay>()
-                {
-                    new SchedulerDay()
-                    {
-                        ScheduleWeekDay = ScheduleWeekDay.Monday,
-                        ClassSubjects = new List<ClassSubject>
-                        {
-                            new ClassSubject
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 1,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "OP",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            },
-                            new ClassSubject()
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 2,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "Math",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            }
-                        }
-                    },
-                    new SchedulerDay()
-                    {
-                        ScheduleWeekDay = ScheduleWeekDay.Tuesday,
-                        ClassSubjects = new List<ClassSubject>
-                        {
-                            new ClassSubject
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 1,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "XZ",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            },
-                            new ClassSubject()
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 2,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "XZ2",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            }
-                        }
-                    },
-                    new SchedulerDay()
-                    {
-                        ScheduleWeekDay = ScheduleWeekDay.Wednesday,
-                        ClassSubjects = new List<ClassSubject>
-                        {
-                            new ClassSubject
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 1,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "WD1",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            },
-                            new ClassSubject()
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 2,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "WD2",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            }
-                        }
-                    },
-                    new SchedulerDay()
-                    {
-                        ScheduleWeekDay = ScheduleWeekDay.Thursday,
-                        ClassSubjects = new List<ClassSubject>
-                        {
-                            new ClassSubject
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 1,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "Math",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            },
-                            new ClassSubject()
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 2,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "English",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            }
-                        }
-                    },
-                    new SchedulerDay()
-                    {
-                        ScheduleWeekDay = ScheduleWeekDay.Friday,
-                        ClassSubjects = new List<ClassSubject>
-                        {
-                            new ClassSubject
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 1,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "Math",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            },
-                            new ClassSubject()
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 2,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "English",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            }
-                        }
-                    },
-                    new SchedulerDay()
-                    {
-                        ScheduleWeekDay = ScheduleWeekDay.Saturday,
-                        ClassSubjects = new List<ClassSubject>
-                        {
-                            new ClassSubject
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 1,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "Math",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            },
-                            new ClassSubject()
-                            {
-                                EndTime = DateTime.Now,
-                                Index = 2,
-                                LessonContext = LessonContext.Lecture,
-                                LessonType = LessonType.Physical,
-                                Link = "https://google.com",
-                                Name = "English",
-                                StartTime = DateTime.Now,
-                                SubjectSubGroup = SubGroup.Second
-                            }
-                        }
-                    }
-                }
-            });
+                });
+            };
 
             _db.SaveChanges();
         }
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Scheduler>>> GetSchedulers()
+        
+        [HttpGet("byFaculty")]
+        public async Task<ActionResult<Scheduler>> GetByFacultyAndGroup(string fc, int spec, 
+            string gr, int grCode, int sub)
         {
-            return await _db.Schedulers.ToListAsync();
+            var faculty = await _db.Faculties.FirstOrDefaultAsync(p => p.NameEn == fc);
+            
+            var speciality = faculty.Specialities.FirstOrDefault(p => p.Code == spec);
+
+            var group = speciality?.Groups.FirstOrDefault(p => p.NameEn == gr && p.Code == grCode);
+            
+            return group?.SubGroups.FirstOrDefault(p => p.Code == sub)?.Scheduler;
+        }
+
+        [HttpPost("update")]
+        public async Task<string> Update([FromBody] UpdateRequest request)
+        {
+            var faculty = await _db.Faculties.FirstOrDefaultAsync(p => p.NameEn == request.Faculty);
+            
+            var speciality = faculty.Specialities.FirstOrDefault(p => p.Code == request.Speciality);
+
+            var group = speciality?.Groups.FirstOrDefault(p => p.NameEn == request.Group
+                                                               && p.Code == request.GroupCode);
+
+            var requested = group?.SubGroups.FirstOrDefault(p => p.Code == request.SubGroup)
+                ?.Scheduler.SchedulerDays
+                .FirstOrDefault(x => x.ScheduleWeekDay == request.SchedulerDay.ScheduleWeekDay);
+
+            if (requested != null)
+            {
+                requested.ClassSubjects = request.SchedulerDay.ClassSubjects;
+                requested.ScheduleWeekDay = request.SchedulerDay.ScheduleWeekDay;
+            }
+            
+            await _db.SaveChangesAsync();
+            
+            return requested?.Id.ToString();
         }
         
-        [HttpGet("{facultygroup}")]
-        public async Task<ActionResult<Scheduler>> GetByFacultyAndGroup(string facultygroup)
-        {
-            return await _db.Schedulers.FirstOrDefaultAsync(
-                x => x.FacultyAndGroup == facultygroup);
-        }
-
-        /*[HttpPost]
-        public async Task<string> SetScheduler()
-        {
-            await _db.Schedulers.AddAsync(new )
-        }*/
+        // Endpoint -> api/scheduler/fis/sp/21/2
     }
 }
