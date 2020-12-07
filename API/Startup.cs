@@ -1,5 +1,6 @@
 using System;
 using Admin.Database;
+using Admin.Database.User;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,11 @@ namespace Admin
                 options.UseLazyLoadingProxies().UseMySql(con,
                     mysqloptions => mysqloptions.ServerVersion
                         (new Version(10,5,5), ServerType.MariaDb)));
+            
+            services.AddDbContext<UserContext>(options => 
+                options.UseLazyLoadingProxies().UseMySql(con,
+                    mysqloptions => mysqloptions.ServerVersion
+                        (new Version(10,5,5), ServerType.MariaDb)));
 
             services.AddControllers();
             
@@ -43,6 +49,12 @@ namespace Admin
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             }));
+            
+            services.AddMvc()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.SuppressModelStateInvalidFilter = true;
+                });
 
             services.AddControllersWithViews();
         }
@@ -55,12 +67,12 @@ namespace Admin
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHsts();
+            //app.UseHsts();
 
             app.UseHttpsRedirection();
             app.UseRouting();
             
-            app.UseAuthorization();
+            //app.UseAuthorization();
 
             app.UseCors("MyPolicy");
 
