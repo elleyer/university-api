@@ -4,12 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Admin.Database;
 using Admin.Models.User;
+using Admin.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;    
 using Microsoft.EntityFrameworkCore;
 
-namespace Admin.Controllers.API.Authorization
+namespace Admin.Controllers.API.Users
 {
     [Authorize]
     [ApiController]
@@ -18,29 +19,47 @@ namespace Admin.Controllers.API.Authorization
     {
         private readonly ApplicationContext _db;
 
-        public UsersController(ApplicationContext userContext)
+        private readonly IUserService _userService;
+
+        public UsersController(ApplicationContext userContext, IUserService userService)
         {
             _db = userContext;
+
+            _userService = userService;
         }
         
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AuthorizationModel model, CancellationToken cancellationToken)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(x => x.Username == model.Username,
-                cancellationToken);
+            var data = await _userService.AuthenticateUser(model.Username, model.Password);
 
-            var message = user == null ? "Can't find this user" : $"Found user {user.Username}";
+            if (data == null)
+            {
+                return Forbid();
+            }
+            
+            if (!data.Approved)
+            {
+                return Unauthorized("Waiting for approval.");
+            }
 
-            return Ok(message);
-
+            return Ok(data);
         }
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegistrationModel model, CancellationToken cancellationToken)
+        public async Task<IActionResult> Register([FromBody] RegistrationModel model, 
+            CancellationToken cancellationToken)
         {
-            return Ok(null);
+            var data = await _userService.RequestRegister(model);
+
+            if (data == null)
+            {
+                return Forbid();
+            }
+
+            return Ok(data);
         }
     }
 }
