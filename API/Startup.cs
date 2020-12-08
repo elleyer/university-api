@@ -1,12 +1,16 @@
 using System;
+using System.Text;
 using Admin.Database;
-using Admin.Database.User;
+using Admin.Helpers;
+using Admin.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
@@ -14,52 +18,56 @@ namespace Admin
 {
     public class Startup
     {
+        public IConfiguration Configuration;
+        
         public Startup(IConfiguration configuration)
         {
+            Configuration = configuration;
         }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
+        
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers().AddNewtonsoftJson(options => 
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+
+            services.AddScoped<IUserService, UserService>();
             
             var con = "Server=localhost;Database=master;User=root;";
 
-            services.AddDbContext<FacultyContext>(options => 
-                options.UseLazyLoadingProxies().UseMySql(con,
-                    mysqloptions => mysqloptions.ServerVersion
-                        (new Version(10,5,5), ServerType.MariaDb)));
-            
-            services.AddDbContext<SchedulerContext>(options => 
-                options.UseLazyLoadingProxies().UseMySql(con,
-                    mysqloptions => mysqloptions.ServerVersion
-                        (new Version(10,5,5), ServerType.MariaDb)));
-            
-            services.AddDbContext<UserContext>(options => 
+            services.AddDbContext<ApplicationContext>(options => 
                 options.UseLazyLoadingProxies().UseMySql(con,
                     mysqloptions => mysqloptions.ServerVersion
                         (new Version(10,5,5), ServerType.MariaDb)));
 
-            services.AddControllers();
+            var appSettings = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettings);
+
+            var appSettingsData = appSettings.Get<AppSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettingsData.Secret);
             
-            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
-            {
-                builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            }));
-            
-            services.AddMvc()
-                .ConfigureApiBehaviorOptions(options =>
+            services.AddAuthentication(x =>
                 {
-                    options.SuppressModelStateInvalidFilter = true;
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(x =>
+                {
+                    x.RequireHttpsMetadata = false;
+                    x.SaveToken = true;
+                    x.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
                 });
+            
+            services.AddControllers();
 
             services.AddControllersWithViews();
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -67,14 +75,15 @@ namespace Admin
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.UseHsts();
+            app.UseHsts();
 
-            app.UseHttpsRedirection();
             app.UseRouting();
-            
-            //app.UseAuthorization();
 
-            app.UseCors("MyPolicy");
+            app.UseAuthentication();
+            app.UseAuthorization();
+            
+            app.UseHttpsRedirection();
+            app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseEndpoints(endpoints =>
             {
