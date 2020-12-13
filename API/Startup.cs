@@ -30,7 +30,7 @@ namespace Admin
             services.AddControllers().AddNewtonsoftJson(options => 
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IModService, ModService>();
             
             var con = "Server=localhost;Database=master;User=root;";
 

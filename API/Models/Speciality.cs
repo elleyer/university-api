@@ -15,5 +15,15 @@ namespace Admin.Models
         public string DescriptionUa { get; set; }
 
         public virtual List<Group> Groups { get; set; }
+
+        public Speciality()
+        {
+        }
+
+        public Speciality(int code, string descr)
+        {
+            Code = code;
+            DescriptionUa = descr;
+        }
     }
 }
