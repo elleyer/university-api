@@ -5,315 +5,28 @@ using System.Threading.Tasks;
 using Admin.Database;
 using Admin.Models;
 using Admin.Models.Requests;
+using Admin.Models.User;
+using Admin.Models.User.Info;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace Admin.Controllers.API
 {
+    //[Authorize]
     [ApiController]
-    [Route("api/[controller]")]
-    public class SchedulerController : ControllerBase
+    [Route("api/scheduler")]
+    public sealed class SchedulerController : ControllerBase
     {
-        private readonly FacultyContext _db;
-        private readonly SchedulerContext _schedulerDb;
+        private readonly ApplicationContext _db;
 
-        public SchedulerController(FacultyContext facultyContext, SchedulerContext schedulerContext)
+        public SchedulerController(ApplicationContext facultyContext)
         {
             _db = facultyContext;
-
-            _schedulerDb = schedulerContext;
-
-            if (!_db.Faculties.Any())
-            {
-                _db.Faculties.Add(new Faculty
-                {
-                    NameEn = "fis",
-                    NameUa = "фіс",
-                    Specialities = new List<Speciality>
-                    {
-                        new Speciality
-                        {
-                            Code = 121,
-                            DescriptionUa = "Інженерія програмного забезпечення",
-                            Groups = new List<Group>
-                            {
-                                new Group
-                                {
-                                    Code = 11,
-                                    NameEn = "sp",
-                                    NameUa = "сп",
-                                    SubGroups = new List<SubGroup>
-                                    {
-                                        new SubGroup
-                                        {
-                                            Code = 1,
-                                            Scheduler = new Scheduler
-                                            {
-                                                SchedulerDays = new List<SchedulerDay>
-                                                {
-                                                    new SchedulerDay
-                                                    {
-                                                        ScheduleWeekDay = ScheduleWeekDay.Monday,
-                                                        ClassSubjects = new List<ClassSubject>
-                                                        {
-                                                            new ClassSubject
-                                                            {
-                                                                StartTime = DateTime.Now,
-                                                                EndTime = DateTime.Now,
-                                                                Index = 1,
-                                                                LessonContext = LessonContext.Lecture,
-                                                                LessonType = LessonType.Physical,
-                                                                Link = "google.com",
-                                                                Name = "test",
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        },
-                                        
-                                        new SubGroup
-                                        {
-                                            Code = 2,
-                                            Scheduler = new Scheduler
-                                            {
-                                                SchedulerDays = new List<SchedulerDay>
-                                                {
-                                                    new SchedulerDay
-                                                    {
-                                                        ScheduleWeekDay = ScheduleWeekDay.Monday,
-                                                        ClassSubjects = new List<ClassSubject>
-                                                        {
-                                                            new ClassSubject
-                                                            {
-                                                                StartTime = DateTime.Now,
-                                                                EndTime = DateTime.Now,
-                                                                Index = 1,
-                                                                LessonContext = LessonContext.Lecture,
-                                                                LessonType = LessonType.Physical,
-                                                                Link = "google.com",
-                                                                Name = "test2sub",
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                
-                                new Group
-                                {
-                                    Code = 12,
-                                    NameEn = "sp",
-                                    NameUa = "сп",
-                                    SubGroups = new List<SubGroup>
-                                    {
-                                        new SubGroup
-                                        {
-                                            Code = 1,
-                                            Scheduler = new Scheduler
-                                            {
-                                                SchedulerDays = new List<SchedulerDay>
-                                                {
-                                                    new SchedulerDay
-                                                    {
-                                                        ScheduleWeekDay = ScheduleWeekDay.Monday,
-                                                        ClassSubjects = new List<ClassSubject>
-                                                        {
-                                                            new ClassSubject
-                                                            {
-                                                                StartTime = DateTime.Now,
-                                                                EndTime = DateTime.Now,
-                                                                Index = 1,
-                                                                LessonContext = LessonContext.Lecture,
-                                                                LessonType = LessonType.Physical,
-                                                                Link = "google.com",
-                                                                Name = "test",
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        },
-                                        
-                                        new SubGroup
-                                        {
-                                            Code = 2,
-                                            Scheduler = new Scheduler
-                                            {
-                                                SchedulerDays = new List<SchedulerDay>
-                                                {
-                                                    new SchedulerDay
-                                                    {
-                                                        ScheduleWeekDay = ScheduleWeekDay.Monday,
-                                                        ClassSubjects = new List<ClassSubject>
-                                                        {
-                                                            new ClassSubject
-                                                            {
-                                                                StartTime = DateTime.Now,
-                                                                EndTime = DateTime.Now,
-                                                                Index = 1,
-                                                                LessonContext = LessonContext.Lecture,
-                                                                LessonType = LessonType.Physical,
-                                                                Link = "google.com",
-                                                                Name = "test2sub",
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        
-                        new Speciality
-                        {
-                            Code = 122,
-                            DescriptionUa = "Інженерія програмного забезпечення",
-                            Groups = new List<Group>
-                            {
-                                new Group
-                                {
-                                    Code = 11,
-                                    NameEn = "sp",
-                                    NameUa = "сп",
-                                    SubGroups = new List<SubGroup>
-                                    {
-                                        new SubGroup
-                                        {
-                                            Code = 1,
-                                            Scheduler = new Scheduler
-                                            {
-                                                SchedulerDays = new List<SchedulerDay>
-                                                {
-                                                    new SchedulerDay
-                                                    {
-                                                        ScheduleWeekDay = ScheduleWeekDay.Monday,
-                                                        ClassSubjects = new List<ClassSubject>
-                                                        {
-                                                            new ClassSubject
-                                                            {
-                                                                StartTime = DateTime.Now,
-                                                                EndTime = DateTime.Now,
-                                                                Index = 1,
-                                                                LessonContext = LessonContext.Lecture,
-                                                                LessonType = LessonType.Physical,
-                                                                Link = "google.com",
-                                                                Name = "test",
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        },
-                                        
-                                        new SubGroup
-                                        {
-                                            Code = 2,
-                                            Scheduler = new Scheduler
-                                            {
-                                                SchedulerDays = new List<SchedulerDay>
-                                                {
-                                                    new SchedulerDay
-                                                    {
-                                                        ScheduleWeekDay = ScheduleWeekDay.Monday,
-                                                        ClassSubjects = new List<ClassSubject>
-                                                        {
-                                                            new ClassSubject
-                                                            {
-                                                                StartTime = DateTime.Now,
-                                                                EndTime = DateTime.Now,
-                                                                Index = 1,
-                                                                LessonContext = LessonContext.Lecture,
-                                                                LessonType = LessonType.Physical,
-                                                                Link = "google.com",
-                                                                Name = "test2sub",
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                
-                                new Group
-                                {
-                                    Code = 12,
-                                    NameEn = "sp",
-                                    NameUa = "сп",
-                                    SubGroups = new List<SubGroup>
-                                    {
-                                        new SubGroup
-                                        {
-                                            Code = 1,
-                                            Scheduler = new Scheduler
-                                            {
-                                                SchedulerDays = new List<SchedulerDay>
-                                                {
-                                                    new SchedulerDay
-                                                    {
-                                                        ScheduleWeekDay = ScheduleWeekDay.Monday,
-                                                        ClassSubjects = new List<ClassSubject>
-                                                        {
-                                                            new ClassSubject
-                                                            {
-                                                                StartTime = DateTime.Now,
-                                                                EndTime = DateTime.Now,
-                                                                Index = 1,
-                                                                LessonContext = LessonContext.Lecture,
-                                                                LessonType = LessonType.Physical,
-                                                                Link = "google.com",
-                                                                Name = "test",
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        },
-                                        
-                                        new SubGroup
-                                        {
-                                            Code = 2,
-                                            Scheduler = new Scheduler
-                                            {
-                                                SchedulerDays = new List<SchedulerDay>
-                                                {
-                                                    new SchedulerDay
-                                                    {
-                                                        ScheduleWeekDay = ScheduleWeekDay.Monday,
-                                                        ClassSubjects = new List<ClassSubject>
-                                                        {
-                                                            new ClassSubject
-                                                            {
-                                                                StartTime = DateTime.Now,
-                                                                EndTime = DateTime.Now,
-                                                                Index = 1,
-                                                                LessonContext = LessonContext.Lecture,
-                                                                LessonType = LessonType.Physical,
-                                                                Link = "google.com",
-                                                                Name = "test2sub",
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            };
-
-            _db.SaveChanges();
         }
-        
+
+        [AllowAnonymous]
         [HttpGet("byFaculty")]
         public async Task<ActionResult<Scheduler>> GetByFacultyAndGroup(string fc, int spec, 
             string gr, int grCode, int sub)
@@ -326,32 +39,58 @@ namespace Admin.Controllers.API
             
             return group?.SubGroups.FirstOrDefault(p => p.Code == sub)?.Scheduler;
         }
-
-        [HttpPost("update")]
-        public async Task<string> Update([FromBody] UpdateRequest request)
+        
+        //[Authorize]
+        [HttpPost("day/create")]
+        public async Task<IActionResult> AddNewDay([FromBody] AddSchedulerDayRequest request)
         {
-            var faculty = await _db.Faculties.FirstOrDefaultAsync(p => p.NameEn == request.Faculty);
+            /*if (User.IsInRole(Role.ADMIN) || User.IsInRole(Role.MOD))
+                return Forbid();*/
+
+            var faculty = await _db.Faculties.FirstOrDefaultAsync(p => p.Id == request.FacultyId);
             
-            var speciality = faculty.Specialities.FirstOrDefault(p => p.Code == request.Speciality);
+            var speciality = faculty.Specialities.FirstOrDefault(p => p.Id == request.SpecialityId);
 
-            var group = speciality?.Groups.FirstOrDefault(p => p.NameEn == request.Group
-                                                               && p.Code == request.GroupCode);
+            var group = speciality?.Groups.FirstOrDefault(p => p.Id == request.GroupId);
 
-            var requested = group?.SubGroups.FirstOrDefault(p => p.Code == request.SubGroup)
-                ?.Scheduler.SchedulerDays
-                .FirstOrDefault(x => x.ScheduleWeekDay == request.SchedulerDay.ScheduleWeekDay);
+            var subGroup = group?.SubGroups.FirstOrDefault(p => p.Id == request.SubgroupId);
 
-            if (requested != null)
+            subGroup?.Scheduler.SchedulerDays.Add(new SchedulerDay
             {
-                requested.ClassSubjects = request.SchedulerDay.ClassSubjects;
-                requested.ScheduleWeekDay = request.SchedulerDay.ScheduleWeekDay;
-            }
-            
+                ScheduleWeekDay = request.WeekDay,
+                ClassSubjects = null
+            });
+
             await _db.SaveChangesAsync();
-            
-            return requested?.Id.ToString();
+
+            return Ok($"{request.WeekDay.ToString()} scheduler for {faculty.NameUa} " +
+                      $"{group?.NameEn}-{group?.Code} was created");
         }
         
+        [HttpPost("day/subjects/add")]
+        public async Task<IActionResult> AddSubject([FromBody] AddSchedulerSubjectRequest request)
+        {
+            /*if (User.IsInRole(Role.ADMIN) || User.IsInRole(Role.MOD))
+                return Forbid();*/
+
+            var faculty = await _db.Faculties.FirstOrDefaultAsync(p => p.Id == request.FacultyId);
+            
+            var speciality = faculty.Specialities.FirstOrDefault(p => p.Id == request.SpecialityId);
+
+            var group = speciality?.Groups.FirstOrDefault(p => p.Id == request.GroupId);
+
+            var subGroup = group?.SubGroups.FirstOrDefault(p => p.Id == request.SubgroupId);
+
+            var schedulerDay = subGroup?.Scheduler.SchedulerDays.FirstOrDefault(
+                    x => x.ScheduleWeekDay == request.WeekDay);
+            
+            schedulerDay?.ClassSubjects.Add(request.ClassSubject); //TODO: Check if already exists.
+
+            await _db.SaveChangesAsync();
+
+            return Ok($"{request.ClassSubject.Name} subject has been created on {faculty.NameEn} => {group?.NameUa}" +
+                      $"-{group?.Code} ({subGroup?.Code} sub)");
+        }
         // Endpoint -> api/scheduler/fis/sp/21/2
     }
 }
