@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Admin.Models.Mod
 {
-    public class Mod
+    public class ModEntity
     {
         [Key]
         public int Id { get; set; }

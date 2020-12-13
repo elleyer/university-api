@@ -14,5 +14,15 @@ namespace Admin.Models
         public string NameUa { get; set; }
         
         public virtual List<Speciality> Specialities { get; set; }
+
+        public Faculty()
+        {
+        }
+        
+        public Faculty(string en, string ua)
+        {
+            NameEn = en;
+            NameUa = ua;
+        }
     }
 }

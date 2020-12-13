@@ -10,11 +10,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;    
 using Microsoft.EntityFrameworkCore;
 
-namespace Admin.Controllers.API.Users
+namespace Admin.Controllers.API.Mods
 {
     [Authorize]
     [ApiController]
-    [Route("api/auth")]
+    [Route("api/mod/auth")]
     public sealed class UsersController : ControllerBase
     {
         private readonly ApplicationContext _db;

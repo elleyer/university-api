@@ -16,5 +16,16 @@ namespace Admin.Models
         public int Code { get; set; }
         
         public virtual List<SubGroup> SubGroups { get; set; }
+
+        public Group()
+        {
+        }
+
+        public Group(string en, string ua, int code)
+        {
+            NameEn = en;
+            NameUa = ua;
+            Code = code;
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace Admin.Services
 
         private readonly AppSettings _appSettings;
         
-        public UserService(ApplicationContext userContext, IOptions<AppSettings> appSettings)
+        public ModService(ApplicationContext userContext, IOptions<AppSettings> appSettings)
         {
             _db = userContext;
             _appSettings = appSettings.Value;

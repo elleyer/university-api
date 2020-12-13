@@ -28,14 +28,13 @@ namespace Admin.Models
     
     public enum ScheduleWeekDay
     {
-        None = 0,
-        Monday = 1 << 0,
-        Tuesday = 1 << 1,
-        Wednesday = 1 << 2,
-        Thursday = 1 << 3,
-        Friday = 1 << 4,
-        Saturday = 1 << 5,
-        Sunday = 1 << 6
+        Monday = 0,
+        Tuesday = 1,
+        Wednesday = 2,
+        Thursday = 3,
+        Friday = 4,
+        Saturday = 5,
+        Sunday = 6
     }
 
     public enum LessonType
