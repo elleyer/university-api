@@ -2,33 +2,33 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Admin.Models.User.Info;
+using Newtonsoft.Json;
 
-namespace Admin.Models.User
+namespace Admin.Models.Mod
 {
-    public class User
+    public class Mod
     {
         [Key]
         public int Id { get; set; }
         
         public string Username { get; set; }
 
-        public string Salt { get; set; }
+        [JsonIgnore]
+        public string Password { get; set; }
+        
+        public string Token { get; set; }
 
-        public UserType UserType { get; set; }
+        public string Role { get; set; }
         
         public bool Approved { get; set; }
         
+        [JsonIgnore]
         public virtual List<AllowedFaculties> AllowedFaculties { get; set; }
+        [JsonIgnore]
         public virtual List<AllowedSpecialities> AllowedSpecialities { get; set; }
+        [JsonIgnore]
         public virtual List<AllowedGroups> AllowedGroups { get; set; }
+        [JsonIgnore]
         public virtual List<AllowedSubgroups> AllowedSubgroups { get; set; }
-    }
-
-    [Flags]
-    public enum UserType
-    {
-        Administrator = 0,
-        Moderator = 1 << 0,
-        ReadOnly = 1 << 1
     }
 }

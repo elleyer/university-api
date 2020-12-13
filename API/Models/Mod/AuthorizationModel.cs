@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace Admin.Models.User
 {
-    public class LoginForm
+    public class AuthorizationModel
     {
         [JsonProperty("Username")]
         public string Username { get; set; }

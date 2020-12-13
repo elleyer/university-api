@@ -19,9 +19,9 @@ namespace Admin.Controllers.API.Users
     {
         private readonly ApplicationContext _db;
 
-        private readonly IUserService _userService;
+        private readonly IModService _userService;
 
-        public UsersController(ApplicationContext userContext, IUserService userService)
+        public UsersController(ApplicationContext userContext, IModService userService)
         {
             _db = userContext;
 

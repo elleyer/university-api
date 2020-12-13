@@ -8,12 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using Admin.Helpers;
+using Admin.Models.Mod;
 using Admin.Models.User.Info;
 using Microsoft.Extensions.Options;
 
 namespace Admin.Services
 {
-    public class UserService : IUserService
+    public class ModService : IModService
     {
         private readonly ApplicationContext _db;
 
@@ -25,9 +26,9 @@ namespace Admin.Services
             _appSettings = appSettings.Value;
         }
         
-        public async Task<User> AuthenticateUser(string uname, string password)
+        public async Task<ModEntity> AuthenticateUser(string uname, string password)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(x => 
+            var user = await _db.Moderators.FirstOrDefaultAsync(x => 
                 x.Username == uname && x.Password == password);
 
             if (user == null)
@@ -54,15 +55,15 @@ namespace Admin.Services
             return user;
         }
 
-        public async Task<User> RequestRegister(RegistrationModel model)
+        public async Task<ModEntity> RequestRegister(RegistrationModel model)
         {
-            var exists = await _db.Users.FirstOrDefaultAsync(x => 
+            var exists = await _db.Moderators.FirstOrDefaultAsync(x => 
                 x.Username == model.Username) != null;
 
             if (exists)
                 return null;
             
-            var user = await _db.Users.AddAsync(new User
+            var mod = await _db.Moderators.AddAsync(new ModEntity
                 {
                     Username = model.Username,
                     Password = model.Password,
@@ -71,7 +72,7 @@ namespace Admin.Services
 
             await _db.SaveChangesAsync();
             
-            return user.Entity;
+            return mod.Entity;
         }
     }
 }
