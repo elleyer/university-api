@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Admin.Models.User.Info
+namespace Admin.Models.Mod.Info
 {
     public class AllowedSubgroups
     {

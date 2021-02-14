@@ -1,9 +1,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Admin.Database;
+using Admin.Helpers.Extensions;
 using Admin.Models;
+using Admin.Models.Mod.Info;
 using Admin.Models.Requests;
-using Admin.Models.User.Info;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ namespace Admin.Controllers.API.Admins
 {
     [ApiController]
     [Route("api/admin")]
-    //[Authorize(Roles = Role.ADMIN)]
+    [Authorize(Roles = Role.ADMIN)]
     public sealed class AdminsController : ControllerBase
     {
         private readonly ApplicationContext _db;
@@ -46,7 +47,7 @@ namespace Admin.Controllers.API.Admins
         [HttpPost("specialities/add")]
         public async Task<IActionResult> AddSpeciality([FromBody] AddSpecialityRequest request)
         {
-            var faculty = await _db.Faculties.FirstOrDefaultAsync(x => x.Id == request.FacultyId);
+            var faculty = await _db.Faculties.GetFaculty(request.FacultyName);
             faculty?.Specialities.Add(new Speciality(request.Code, request.DescriptionUa));
 
             await _db.SaveChangesAsync();
@@ -69,9 +70,9 @@ namespace Admin.Controllers.API.Admins
         [HttpPost("groups/add")]
         public async Task<IActionResult> UpdateGroup([FromBody] AddGroupRequest request)
         {
-            var faculty = await _db.Faculties.FirstOrDefaultAsync(x => x.Id == request.FacultyId);
-
-            var speciality = faculty?.Specialities.FirstOrDefault(x => x.Id == request.SpecialityId);
+            var speciality = await _db.Faculties.GetFaculty(request.FacultyName).Result
+                .GetSpeciality(request.SpecialityCode);
+            
             speciality?.Groups.Add(new Group(request.NameEn, request.NameUa, request.Code));
             
             await _db.SaveChangesAsync();
@@ -88,11 +89,9 @@ namespace Admin.Controllers.API.Admins
         [HttpPost("subgroups/add")]
         public async Task<IActionResult> UpdateSubgroup([FromBody] AddSubgroupRequest request)
         {
-            var faculty = await _db.Faculties.FirstOrDefaultAsync(x => x.Id == request.FacultyId);
-
-            var speciality = faculty?.Specialities.FirstOrDefault(x => x.Id == request.SpecialityId);
+            var group = await _db.Faculties.GetFaculty(request.FacultyName).Result
+                .GetSpeciality(request.SpecialityCode).Result.GetGroup(request.GroupName, request.GroupCode);
             
-            var group = speciality?.Groups.FirstOrDefault(x => x.Id == request.GroupId);
             group?.SubGroups.Add(new SubGroup(request.Code));
             
             await _db.SaveChangesAsync();
