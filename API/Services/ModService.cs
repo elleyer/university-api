@@ -3,13 +3,12 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Admin.Database;
-using Admin.Models.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using Admin.Helpers;
 using Admin.Models.Mod;
-using Admin.Models.User.Info;
+using Admin.Models.Mod.Info;
 using Microsoft.Extensions.Options;
 
 namespace Admin.Services

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Admin.Database;
-using Admin.Models.User;
+using Admin.Models.Mod;
 using Admin.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,13 +15,13 @@ namespace Admin.Controllers.API.Mods
     [Authorize]
     [ApiController]
     [Route("api/mod/auth")]
-    public sealed class UsersController : ControllerBase
+    public sealed class ModsController : ControllerBase
     {
         private readonly ApplicationContext _db;
 
         private readonly IModService _userService;
 
-        public UsersController(ApplicationContext userContext, IModService userService)
+        public ModsController(ApplicationContext userContext, IModService userService)
         {
             _db = userContext;
 

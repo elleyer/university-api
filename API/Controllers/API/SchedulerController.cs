@@ -23,7 +23,7 @@ namespace Admin.Controllers.API
 
         [AllowAnonymous] //By raw data
         [Route("get")]
-        public async Task<ActionResult<Scheduler>> GetByFacultyAndGroup(string faculty, int spec, 
+        public async Task<ActionResult<SchedulerModel>> GetByFacultyAndGroup(string faculty, int spec, 
             string gname, int gcode, int scode)
         {
             var subGroup = await _db.Faculties.GetSubGroup(faculty, spec,
@@ -47,7 +47,7 @@ namespace Admin.Controllers.API
             var subGroup = await _db.Faculties.GetSubGroup(request.FacultyName, request.SpecialityCode,
                 request.GroupName, request.GroupCode, request.SubgroupCode);
 
-            subGroup?.Scheduler.SchedulerDays.Add(new SchedulerDay
+            subGroup?.Scheduler.SchedulerDays.Add(new SchedulerDayModel
             {
                 ScheduleWeekDay = request.WeekDay,
                 ClassSubjects = null

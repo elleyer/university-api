@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Admin.Models.User.Info;
+using Admin.Models.Mod.Info;
 using Newtonsoft.Json;
 
 namespace Admin.Models.Mod

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Admin.Models.Scheduler
 {
-    public class ClassSubject
+    public class SubjectModel
     {
         [Key]
         [JsonIgnore]

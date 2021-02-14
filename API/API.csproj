@@ -28,6 +28,5 @@
     <ItemGroup>
       <Folder Include="AdminTools" />
       <Folder Include="Controllers\API\Admins" />
-      <Folder Include="Models\Data" />
     </ItemGroup>
 </Project>

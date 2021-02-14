@@ -1,3 +1,4 @@
+using Admin.Models.Scheduler;
 using Newtonsoft.Json;
 
 namespace Admin.Models.Requests
@@ -20,6 +21,6 @@ namespace Admin.Models.Requests
         public int SubGroup { get; set; }
         
         [JsonProperty("schedulerDay")]
-        public SchedulerDay SchedulerDay { get; set; }
+        public SchedulerDayModel SchedulerDay { get; set; }
     }
 }

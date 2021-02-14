@@ -5,28 +5,16 @@ using Newtonsoft.Json;
 
 namespace Admin.Models.Scheduler
 {
-    public class Scheduler
+    public class SchedulerModel
     {   
         [Key]
         [JsonIgnore]
         public int Id { get; set; }
 
         [ForeignKey("SchedulerDays")]
-        public virtual List<SchedulerDay> SchedulerDays { get; set; }
+        public virtual List<SchedulerDayModel> SchedulerDays { get; set; }
     }
 
-    public class SchedulerDay
-    {
-        [Key]
-        [JsonIgnore]
-        public int Id { get; set; }
-        
-        public virtual ScheduleWeekDay ScheduleWeekDay { get; set; }
-        
-        [ForeignKey("PairedSubjects")]
-        public virtual List<ClassSubject> ClassSubjects { get; set; }
-    }
-    
     public enum ScheduleWeekDay
     {
         Monday = 0,

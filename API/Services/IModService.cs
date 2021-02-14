@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Admin.Models.Mod;
-using Admin.Models.User;
 
 namespace Admin.Services
 {

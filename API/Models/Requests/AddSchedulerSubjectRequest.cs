@@ -24,6 +24,6 @@ namespace Admin.Models.Requests
         public ScheduleWeekDay WeekDay { get; set; }
                 
         [JsonProperty("classSubject")]
-        public ClassSubject ClassSubject { get; set; }
+        public SubjectModel ClassSubject { get; set; }
     }
 }

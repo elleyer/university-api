@@ -32,7 +32,7 @@ namespace Admin
 
             services.AddScoped<IModService, ModService>();
             
-            var con = "Server=localhost;Database=master;User=root;";
+            const string con = "Server=localhost;Database=master;User=root;";
 
             services.AddDbContext<ApplicationContext>(options => 
                 options.UseLazyLoadingProxies().UseMySql(con,
@@ -81,7 +81,7 @@ namespace Admin
 
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
             app.UseHttpsRedirection();
             app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 

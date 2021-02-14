@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Admin.Models.Scheduler;
 using Newtonsoft.Json;
 
 namespace Admin.Models
@@ -12,7 +13,7 @@ namespace Admin.Models
 
         public int Code { get; set; }
 
-        public virtual Scheduler Scheduler { get; set; }
+        public virtual SchedulerModel Scheduler { get; set; }
 
         public SubGroup()
         {
@@ -22,8 +23,7 @@ namespace Admin.Models
         {
             Code = code;
 
-            Scheduler = new Scheduler {SchedulerDays = new List<SchedulerDay>()};
-
+            Scheduler = new SchedulerModel {SchedulerDays = new List<SchedulerDayModel>()};
         }
     }
 }

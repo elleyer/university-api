@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Admin.Models.User
+namespace Admin.Models.Mod
 {
     public class AuthorizationModel
     {
