@@ -1,12 +1,11 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Admin.Database;
-using Admin.Models;
+using Admin.Helpers.Extensions;
 using Admin.Models.Requests;
+using Admin.Models.Scheduler;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using static Admin.Helpers.Extensions.Scheduler;
 
 namespace Admin.Controllers.API
 {
@@ -22,18 +21,20 @@ namespace Admin.Controllers.API
             _db = facultyContext;
         }
 
-        [AllowAnonymous]
-        [HttpGet("byFaculty")]
-        public async Task<ActionResult<Scheduler>> GetByFacultyAndGroup(string fc, int spec, // TODO: implement by ID's
-            string gr, int grCode, int sub)
+        [AllowAnonymous] //By raw data
+        [Route("get")]
+        public async Task<ActionResult<Scheduler>> GetByFacultyAndGroup(string faculty, int spec, 
+            string gname, int gcode, int scode)
         {
-            var faculty = await _db.Faculties.FirstOrDefaultAsync(p => p.NameEn == fc);
-            
-            var speciality = faculty.Specialities.FirstOrDefault(p => p.Code == spec);
+            var subGroup = await _db.Faculties.GetSubGroup(faculty, spec,
+                gname, gcode, scode);
 
-            var group = speciality?.Groups.FirstOrDefault(p => p.NameEn == gr && p.Code == grCode);
+            var scheduler = subGroup.Scheduler;
+
+            if (scheduler == null)
+                return Forbid();
             
-            return group?.SubGroups.FirstOrDefault(p => p.Code == sub)?.Scheduler;
+            return scheduler;
         }
         
         //[Authorize]
@@ -43,8 +44,8 @@ namespace Admin.Controllers.API
             /*if (User.IsInRole(Role.ADMIN) || User.IsInRole(Role.MOD))
                 return Forbid();*/
 
-            var subGroup = await _db.Faculties.GetSubGroup(request.FacultyId, request.SpecialityId,
-                request.GroupId, request.SubgroupId);
+            var subGroup = await _db.Faculties.GetSubGroup(request.FacultyName, request.SpecialityCode,
+                request.GroupName, request.GroupCode, request.SubgroupCode);
 
             subGroup?.Scheduler.SchedulerDays.Add(new SchedulerDay
             {
@@ -63,19 +64,19 @@ namespace Admin.Controllers.API
             /*if (User.IsInRole(Role.ADMIN) || User.IsInRole(Role.MOD))
                 return Forbid();*/
 
-            var faculty = await _db.Faculties.GetFaculty(request.FacultyId);
+            var faculty = await _db.Faculties.GetFaculty(request.FacultyName);
 
-            var speciality = await faculty.GetSpeciality(request.SpecialityId);
+            var speciality = await faculty.GetSpeciality(request.SpecialityCode);
 
             if (speciality == null) 
                 return BadRequest("Bad request at 'speciality'");
             
-            var group = await speciality.GetGroup(request.GroupId);
+            var group = await speciality.GetGroup(request.GroupName, request.GroupCode);
 
             if (group == null) 
                 return BadRequest("Bad request at 'group'");
             
-            var subGroup = await @group.GetSubGroup(request.SubgroupId);
+            var subGroup = await group.GetSubGroup(request.SubgroupCode);
 
             var schedulerDay = subGroup?.Scheduler.SchedulerDays.FirstOrDefault(
                 x => x.ScheduleWeekDay == request.WeekDay);
