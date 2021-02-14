@@ -1,20 +1,24 @@
+using Admin.Models.Scheduler;
 using Newtonsoft.Json;
 
 namespace Admin.Models.Requests
 {
     public class AddSchedulerSubjectRequest
     {
-        [JsonProperty("facultyId")]
-        public int FacultyId { get; set; }
+        [JsonProperty("facultyName")]
+        public string FacultyName { get; set; }
         
-        [JsonProperty("specialityId")]
-        public int SpecialityId { get; set; }
+        [JsonProperty("specialityCode")]
+        public int SpecialityCode { get; set; }
         
-        [JsonProperty("groupId")]
-        public int GroupId { get; set; }
+        [JsonProperty("groupName")]
+        public string GroupName { get; set; }
         
-        [JsonProperty("subId")]
-        public int SubgroupId { get; set; }
+        [JsonProperty("groupCode")]
+        public int GroupCode { get; set; }
+        
+        [JsonProperty("subCode")]
+        public int SubgroupCode { get; set; }
 
         [JsonProperty("scheduleWeekDay")] 
         public ScheduleWeekDay WeekDay { get; set; }

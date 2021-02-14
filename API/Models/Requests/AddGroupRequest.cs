@@ -4,11 +4,11 @@ namespace Admin.Models.Requests
 {
     public class AddGroupRequest
     {
-        [JsonProperty("facultyId")]
-        public int FacultyId { get; set; }
+        [JsonProperty("facultyName")]
+        public string FacultyName { get; set; }
         
-        [JsonProperty("specialityId")]
-        public int SpecialityId { get; set; }
+        [JsonProperty("specialityCode")]
+        public int SpecialityCode { get; set; }
         
         [JsonProperty("nameEn")]
         public string NameEn { get; set; }

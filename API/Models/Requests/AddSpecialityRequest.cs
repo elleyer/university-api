@@ -4,8 +4,8 @@ namespace Admin.Models.Requests
 {
     public class AddSpecialityRequest
     {
-        [JsonProperty("facultyId")] 
-        public int FacultyId;
+        [JsonProperty("facultyName")] 
+        public string FacultyName;
         
         [JsonProperty("code")]
         public int Code { get; set; }
