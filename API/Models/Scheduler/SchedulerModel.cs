@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 
-namespace Admin.Models
+namespace Admin.Models.Scheduler
 {
     public class Scheduler
-    {
+    {   
         [Key]
         [JsonIgnore]
         public int Id { get; set; }
@@ -18,6 +18,7 @@ namespace Admin.Models
     public class SchedulerDay
     {
         [Key]
+        [JsonIgnore]
         public int Id { get; set; }
         
         public virtual ScheduleWeekDay ScheduleWeekDay { get; set; }
@@ -39,16 +40,14 @@ namespace Admin.Models
 
     public enum LessonType
     {
-        None = 0,
-        Physical = 1 << 0,
-        Remote = 1 << 1
+        Physical = 0,
+        Remote = 1
     }
 
     public enum LessonContext
     {
-        None = 0,
-        Lecture = 1 << 0,
-        PracticalWork = 1 << 1,
-        LaboratoryWork = 1 << 2
+        Lecture = 0,
+        PracticalWork = 1,
+        LaboratoryWork = 2
     }
 }
