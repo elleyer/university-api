@@ -30,7 +30,8 @@ namespace Admin.Controllers.API.Mods
         
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] AuthorizationModel model, CancellationToken cancellationToken)
+        public async Task<IActionResult> Login([FromBody] AuthorizationModel model, 
+            CancellationToken cancellationToken)
         {
             var data = await _userService.AuthenticateUser(model.Username, model.Password);
 

@@ -13,7 +13,7 @@ namespace Admin.Controllers.API.Admins
 {
     [ApiController]
     [Route("api/admin")]
-    [Authorize(Roles = Role.ADMIN)]
+    //[Authorize(Roles = Role.ADMIN)]
     public sealed class AdminsController : ControllerBase
     {
         private readonly ApplicationContext _db;

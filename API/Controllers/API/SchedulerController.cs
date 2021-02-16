@@ -37,7 +37,7 @@ namespace Admin.Controllers.API
             return scheduler;
         }
         
-        //[Authorize]
+        [Authorize]
         [HttpPost("day/create")]
         public async Task<IActionResult> AddNewDay([FromBody] AddSchedulerDayRequest request)
         {
@@ -58,6 +58,7 @@ namespace Admin.Controllers.API
             return Ok($"{request.WeekDay.ToString()} scheduler for id {subGroup?.Id} has been updated");
         }
         
+        [Authorize]
         [HttpPost("day/subjects/add")]
         public async Task<IActionResult> AddSubject([FromBody] AddSchedulerSubjectRequest request)
         {
