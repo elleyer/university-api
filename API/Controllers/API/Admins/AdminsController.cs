@@ -26,10 +26,11 @@ namespace Admin.Controllers.API.Admins
         [HttpPost("faculties/add")]
         public async Task<IActionResult> AddFaculty([FromBody] AddFacultyRequest request)
         {
-            await _db.Faculties.AddAsync(new Faculty(request.NameEn, request.NameUa));
+            await _db.Faculties.AddAsync(new Faculty(request.NameEn.ToLower(), 
+                request.NameUa.ToLower()));
             await _db.SaveChangesAsync();
 
-            return Ok("Successfully added a new faculty.");
+            return Ok($"Successfully created a new faculty '{request.NameEn}'.");
         }
         
         [HttpPost("faculties/update")]
@@ -52,7 +53,7 @@ namespace Admin.Controllers.API.Admins
 
             await _db.SaveChangesAsync();
 
-            return Ok($"Successfully added a new speciality to {faculty?.NameEn}");
+            return Ok($"Successfully created a new speciality '{request.Code}' to '{request.FacultyName}'");
         }
         
         [HttpPost("specialities/update")]
@@ -70,14 +71,15 @@ namespace Admin.Controllers.API.Admins
         [HttpPost("groups/add")]
         public async Task<IActionResult> UpdateGroup([FromBody] AddGroupRequest request)
         {
-            var speciality = await _db.Faculties.GetFaculty(request.FacultyName).Result
+            var speciality = await _db.Faculties.GetFaculty(request.FacultyName.ToLower()).Result
                 .GetSpeciality(request.SpecialityCode);
-            
-            speciality?.Groups.Add(new Group(request.NameEn, request.NameUa, request.Code));
+
+            speciality?.Groups.Add(new Group(request.NameEn, 
+                request.NameUa, request.Code));
             
             await _db.SaveChangesAsync();
 
-            return Ok($"Successfully added a new Group to {speciality?.Code} - {speciality?.DescriptionUa}");
+            return Ok($"Successfully added a new Group to '{speciality?.Code} - {speciality?.DescriptionUa}'");
         }
         
         [HttpPost("groups/remove")]
@@ -90,13 +92,14 @@ namespace Admin.Controllers.API.Admins
         public async Task<IActionResult> UpdateSubgroup([FromBody] AddSubgroupRequest request)
         {
             var group = await _db.Faculties.GetFaculty(request.FacultyName).Result
-                .GetSpeciality(request.SpecialityCode).Result.GetGroup(request.GroupName, request.GroupCode);
+                .GetSpeciality(request.SpecialityCode).Result
+                .GetGroup(request.GroupName, request.GroupCode);
             
             group?.SubGroups.Add(new SubGroup(request.Code));
             
             await _db.SaveChangesAsync();
 
-            return Ok($"Successfully added a new SubGroup to {group?.NameUa}-{group?.Code}");
+            return Ok($"Successfully added a new SubGroup to '{request.GroupName}-{group?.Code}'");
         }
         
         [HttpPost("subgroup/remove")]
