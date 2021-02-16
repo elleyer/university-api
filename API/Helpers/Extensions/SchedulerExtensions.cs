@@ -29,7 +29,7 @@ namespace Admin.Helpers.Extensions
 
             await Task.Run(() => 
             {
-                faculty = db.FirstOrDefaultAsync(x => x.NameEn == name).Result;
+                faculty = db.FirstOrDefaultAsync(x => x.NameEn == name.ToLower()).Result;
             });
             
             return faculty;
@@ -53,7 +53,7 @@ namespace Admin.Helpers.Extensions
 
             await Task.Run(() =>
             {
-                group = speciality.Groups.FirstOrDefault(x => x.NameEn == name && x.Code == code);
+                group = speciality.Groups.FirstOrDefault(x => x.NameEn == name.ToLower() && x.Code == code);
             });
             
             return group;
