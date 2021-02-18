@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Admin.Database;
+using Admin.Exceptions;
 using Admin.Helpers.Extensions;
 using Admin.Models.Requests;
 using Admin.Models.Scheduler;
@@ -21,20 +22,24 @@ namespace Admin.Controllers.API
             _db = facultyContext;
         }
 
-        [AllowAnonymous] //By raw data
+        [AllowAnonymous]
         [Route("get")]
         public async Task<ActionResult<SchedulerModel>> GetByFacultyAndGroup(string faculty, int spec, 
             string gname, int gcode, int scode)
         {
-            var subGroup = await _db.Faculties.GetSubGroup(faculty, spec,
-                gname, gcode, scode);
+            try
+            {
+                var subGroup = await _db.Faculties.GetSubGroup(faculty, spec,
+                    gname, gcode, scode);
 
-            var scheduler = subGroup.Scheduler;
-
-            if (scheduler == null)
-                return Forbid();
+                var scheduler = subGroup.Scheduler;
+                return scheduler;
+            }
             
-            return scheduler;
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
         
         [Authorize]
@@ -69,14 +74,8 @@ namespace Admin.Controllers.API
 
             var speciality = await faculty.GetSpeciality(request.SpecialityCode);
 
-            if (speciality == null) 
-                return BadRequest("Bad request at 'speciality'");
-            
             var group = await speciality.GetGroup(request.GroupName, request.GroupCode);
 
-            if (group == null) 
-                return BadRequest("Bad request at 'group'");
-            
             var subGroup = await group.GetSubGroup(request.SubgroupCode);
 
             var schedulerDay = subGroup?.Scheduler.SchedulerDays.FirstOrDefault(
