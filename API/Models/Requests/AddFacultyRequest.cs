@@ -9,6 +9,5 @@ namespace Admin.Models.Requests
         
         [JsonProperty("nameUa")]
         public string NameUa { get; set; }
-
     }
 }
