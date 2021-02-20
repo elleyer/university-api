@@ -1,7 +1,10 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Admin.Exceptions;
 using Admin.Models;
+using Admin.Models.Scheduler;
 using Microsoft.EntityFrameworkCore;
 
 namespace Admin.Helpers.Extensions
@@ -23,7 +26,7 @@ namespace Admin.Helpers.Extensions
 
         #endregion
         
-        #region byRaw
+        #region GetByRaw
         
         public static async Task<Faculty> GetFaculty(this DbSet<Faculty> db, string name)
         {
@@ -99,6 +102,44 @@ namespace Admin.Helpers.Extensions
             return await group.GetSubGroup(subCode);
         }
         
+        #endregion
+
+        #region Add
+
+        public static void CreateNew(this List<SchedulerDayModel> data, ScheduleWeekDay day)
+        {
+            if (data.Exists(schedulerModel => 
+                schedulerModel.ScheduleWeekDay == day))
+            {
+                throw new AlreadyExistsException(
+                    $"'{day.ToString()}' scheduler already exists.");
+            }
+            data.Add(new SchedulerDayModel()
+            {
+                ScheduleWeekDay = day
+            });
+        }
+        
+        public static void CreateNew(this List<SubjectModel> data, SubjectModel model)
+        {
+            if (data.Exists(subjectModel => subjectModel.Index == model.Index))
+            {
+                throw new AlreadyExistsException(
+                    $"Subject with index '{model.Index}' already exists.");
+            }
+            data.Add(model);
+        }
+        
+        public static void CreateNew(this List<SubGroup> data, int code)
+        {
+            if (data.Exists(subgroupModel => subgroupModel.Code == code))
+            {
+                throw new AlreadyExistsException(
+                    $"Subgroup with id '{code}' already exists.");
+            }
+            data.Add(new SubGroup(code));
+        }
+
         #endregion
     }
 }
