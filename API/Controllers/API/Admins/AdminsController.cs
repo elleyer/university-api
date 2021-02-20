@@ -1,6 +1,8 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Admin.Database;
+using Admin.Exceptions;
 using Admin.Helpers.Extensions;
 using Admin.Models;
 using Admin.Models.Mod.Info;
@@ -48,12 +50,20 @@ namespace Admin.Controllers.API.Admins
         [HttpPost("specialities/add")]
         public async Task<IActionResult> AddSpeciality([FromBody] AddSpecialityRequest request)
         {
-            var faculty = await _db.Faculties.GetFaculty(request.FacultyName);
-            faculty?.Specialities.Add(new Speciality(request.Code, request.DescriptionUa));
+            try
+            {
+                var faculty = await _db.Faculties.GetFaculty(request.FacultyName);
+                faculty?.Specialities.Add(new Speciality(request.Code, request.DescriptionUa));
 
-            await _db.SaveChangesAsync();
-
-            return Ok($"Successfully created a new speciality '{request.Code}' to '{request.FacultyName}'");
+                await _db.SaveChangesAsync();
+                
+                return Ok($"Successfully created a new speciality '{request.Code}' to '{request.FacultyName}'");
+            }
+            
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
         }
         
         [HttpPost("specialities/update")]
@@ -71,15 +81,23 @@ namespace Admin.Controllers.API.Admins
         [HttpPost("groups/add")]
         public async Task<IActionResult> UpdateGroup([FromBody] AddGroupRequest request)
         {
-            var speciality = await _db.Faculties.GetFaculty(request.FacultyName.ToLower()).Result
-                .GetSpeciality(request.SpecialityCode);
-
-            speciality?.Groups.Add(new Group(request.NameEn, 
-                request.NameUa, request.Code));
+            try
+            {
+                var speciality = await _db.Faculties.GetFaculty(request.FacultyName.ToLower()).Result
+                    .GetSpeciality(request.SpecialityCode);
+                
+                speciality?.Groups.Add(new Group(request.NameEn, 
+                    request.NameUa, request.Code));
             
-            await _db.SaveChangesAsync();
-
-            return Ok($"Successfully added a new Group to '{speciality?.Code} - {speciality?.DescriptionUa}'");
+                await _db.SaveChangesAsync();
+                
+                return Ok($"Successfully added a new Group to '{speciality?.Code} - {speciality?.DescriptionUa}'");
+            }
+            
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
         }
         
         [HttpPost("groups/remove")]
@@ -91,15 +109,23 @@ namespace Admin.Controllers.API.Admins
         [HttpPost("subgroups/add")]
         public async Task<IActionResult> UpdateSubgroup([FromBody] AddSubgroupRequest request)
         {
-            var group = await _db.Faculties.GetFaculty(request.FacultyName).Result
-                .GetSpeciality(request.SpecialityCode).Result
-                .GetGroup(request.GroupName, request.GroupCode);
+            try
+            {
+                var group = await _db.Faculties.GetFaculty(request.FacultyName).Result
+                    .GetSpeciality(request.SpecialityCode).Result
+                    .GetGroup(request.GroupName, request.GroupCode);
             
-            group?.SubGroups.Add(new SubGroup(request.Code));
+                group?.SubGroups.CreateNew(request.Code);
             
-            await _db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
 
-            return Ok($"Successfully added a new SubGroup to '{request.GroupName}-{group?.Code}'");
+                return Ok($"Successfully added a new SubGroup to '{request.GroupName}-{group?.Code}'");
+            }
+            
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
         }
         
         [HttpPost("subgroup/remove")]
